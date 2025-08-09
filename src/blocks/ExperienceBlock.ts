@@ -10,23 +10,33 @@ import { ProjectBlock } from "./ProjectBlock";
 import { HighlightDecorator } from "../decorators/HighlightDecorator";
 
 export class ExperienceBlock implements IBlock {
-  constructor(private d: Experience[]) {}
+  constructor(private readonly d: Experience[]) {}
 
   /**
    * Рендеринг блоку досвіду роботи
-   *
-   * TODO: Реалізуйте метод render(), який створює DOM-елементи для секції досвіду
-   * та використовує патерн Composite для рендерингу проєктів всередині цієї секції.
    */
   render(): HTMLElement {
-    // Створюємо контейнер для досвіду роботи
     const container = document.createElement("section");
     container.className = "section experience";
     container.innerHTML = "<h2>Experience</h2>";
 
-    // TODO: Для кожного досвіду створити div.experience-item з innerHTML (позиція, компанія, період)
-    // TODO: Додати проєкти (ProjectBlock, HighlightDecorator) до цього div
-    // TODO: Додати всі experience-item до секції
+    this.d.forEach((exp ) => {
+      const item = document.createElement("div");
+      item.className = "experience-item";
+
+      item.innerHTML += `
+        <h3>${exp.position}</h3>
+        <p>${exp.company}</p>
+      `;
+
+      exp.projects.forEach((p: Project) => {
+        const raw = new ProjectBlock(p).render();
+        const wrapped = p.isRecent ? new HighlightDecorator(raw).render() : raw;
+        item.appendChild(wrapped);
+      });
+
+      container.appendChild(item);
+    });
 
     return container;
   }

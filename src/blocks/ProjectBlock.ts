@@ -7,12 +7,11 @@ import { Project } from "../models/ResumeModel";
 import { IBlock } from "./BlockFactory";
 
 export class ProjectBlock implements IBlock {
-  constructor(private d: Project) {}
+  constructor(private readonly d: Project) {}
 
   /**
    * Рендеринг блоку проєкту
    *
-   * TODO: Реалізуйте метод render(), який створює HTML-елементи
    * для відображення даних проєкту
    */
   render(): HTMLElement {
@@ -20,7 +19,7 @@ export class ProjectBlock implements IBlock {
     const container = document.createElement("div");
     container.className = "project-item";
 
-    // TODO: Заповнити container.textContent рядком: "• {name} – {description}"
+    container.textContent = `• ${this.d.name} – ${this.d.description}`;
 
     return container;
   }

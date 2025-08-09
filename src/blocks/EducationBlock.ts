@@ -6,12 +6,10 @@ import { Education } from "../models/ResumeModel";
 import { IBlock } from "./BlockFactory";
 
 export class EducationBlock implements IBlock {
-  constructor(private d: Education[]) {}
+  constructor(private readonly d: Education[]) {}
 
   /**
    * Рендеринг блоку освіти
-   *
-   * TODO: Реалізуйте метод для відображення інформації про освіту
    */
   render(): HTMLElement {
     // Створюємо секцію
@@ -19,8 +17,25 @@ export class EducationBlock implements IBlock {
     el.className = "section education";
     el.innerHTML = "<h2>Education</h2>";
 
-    // TODO: Додайте до секції інформацію про навчальний заклад (this.d.institution),
-    // отриманий ступінь (this.d.degree) та період навчання (this.d.graduation)
+    this.d.forEach((edu) => {
+      const item = document.createElement("div");
+      item.className = "education-item";
+
+      const institution = document.createElement("h3");
+      institution.textContent = edu.institution;
+
+      const degree = document.createElement("p");
+      degree.textContent = edu.degree;
+
+      const graduation = document.createElement("p");
+      graduation.textContent = `Graduated: ${edu.graduation}`;
+
+      item.appendChild(institution);
+      item.appendChild(degree);
+      item.appendChild(graduation);
+
+      el.appendChild(item);
+    });
 
     return el;
   }

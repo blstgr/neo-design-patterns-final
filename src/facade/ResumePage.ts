@@ -3,14 +3,21 @@ import { ResumeImporter } from "../importer/ResumeImporter";
 /**
  * Фасад: єдина точка входу.
  */
+
 export class ResumePage {
   async init(jsonPath: string): Promise<void> {
-    // TODO: Завантажити дані через fetchData
-    // TODO: Імпортувати дані через ResumeImporter
+    const rawData = await this.fetchData(jsonPath);
+    const importer = new ResumeImporter(rawData);
+    importer.validate();
+    const model = importer.map();
+    importer.render(model);
   }
 
   private async fetchData(path: string): Promise<unknown> {
-    // TODO: Завантажити JSON з вказаного шляху
-    return {};
+    const response = await fetch(path);
+    if (!response.ok) {
+      throw new Error(`Failed to load JSON: ${response.statusText}`);
+    }
+    return response.json();
   }
 }
