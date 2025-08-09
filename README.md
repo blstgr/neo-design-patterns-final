@@ -1,61 +1,49 @@
-# neo-design-patterns-hw-11
-Цей застосунок демонструє використання патернів Ланцюжок відповідальностей та Посередник для обробки структурованих даних із вхідного JSON-файлу.
+# neo-design-patterns-final
+Цей застосунок демонструє використання п’яти патернів проєктування: Facade, Template Method, Factory Method, Composite та Decorator. Резюме генерується динамічно на основі даних із файлу `resume.json`.
 
 ## Функціональність
-- Ланцюжок відповідальностей — кожен тип запису (access_log, transaction, system_error) обробляється окремим ланцюгом з валідацією та нормалізацією.
-- Посередник — централізує збереження результатів обробки у відповідні файли.
-- Всі помилкові записи записуються у файл rejected.jsonl з описом причини.
+- Facade — `ResumePage` є єдиною точкою входу, яка приховує деталі завантаження, обробки та рендерингу резюме.
+- Template Method — `AbstractImporter` визначає шаблон алгоритму імпорту, а `ResumeImporter` реалізує конкретні кроки: `validate`, `map`, `render`.
+- Factory Method — `BlockFactory` створює відповідні блоки резюме залежно від типу.
+- Composite — `ExperienceBlock` містить вкладені `ProjectBlock` елементи, підтримуючи рекурсивну структуру.
+- Decorator — `HighlightDecorator` додає стилі до проєктів з прапорцем `isRecent: true` без зміни їх структури.
 
 ## Структура проєкту
 ```text
 src/
-├── chain/
-│   ├── AbstractHandler.ts
-│   ├── chains/                  # Ланцюги для кожного типу
-│   │   ├── AccessLogChain.ts
-│   │   ├── TransactionChain.ts
-│   │   └── SystemErrorChain.ts
-│   └── handlers/               # Обробники-перевірки
-│       ├── AmountParser.ts
-│       ├── CurrencyNormalizer.ts
-│       ├── IpValidator.ts
-│       ├── LevelValidator.ts
-│       ├── MessageTrimmer.ts
-│       ├── TimestampParser.ts
-│       └── UserIdValidator.ts
-├── mediator/
-│   ├── ProcessingMediator.ts
-│   └── writers/                # Збереження оброблених записів
-│       ├── AccessLogWriter.ts
-│       ├── TransactionWriter.ts
-│       ├── ErrorLogWriter.ts
-│       └── RejectedWriter.ts
+├── blocks/
+│   ├── BlockFactory.ts
+│   ├── EducationBlock.ts
+│   ├── ExperienceBlock.ts
+│   ├── HeaderBlock.ts
+│   ├── ProjectBlock.ts
+│   ├── SkillsBlock.ts
+│   └── SummaryBlock.ts
+├── decorators/
+│   └── HighlightDecorator.ts
+├── facade/
+│   └── ResumePage.ts
+├── importer/
+│   ├── AbstractImporter.ts
+│   └── ResumeImporter.ts
 ├── models/
-│   └── DataRecord.ts           # Типи даних
-├── data/
-│   └── records.json            # Вхідні записи
-├── output/                     # Вихідні файли
-└── main.ts                     # Точка входу
+│   └── ResumeModel.ts
+├── styles.css
+├── main.ts
+├── resume.json
+└── index.html
 ```
 
 ## Запуск 
 ```bash
-npx ts-node src/main.ts
+npm install
+npm run dev
 ```
 
-## Вивід у консолі
-```text
-[INFO] Завантажено записів: 19
-[INFO] Успішно оброблено: 9
-[WARN] Відхилено з помилками: 10
-[INFO] Звіт збережено у директорії output/
-```
-
-## Згенеровані файли
-- `output/access_logs.json` — масив оброблених access_log.
-- `output/transactions.csv` — таблиця з transaction.
-- `output/errors.jsonl` — потік рядків system_error.
-- `output/rejected.jsonl` — відхилені записи з описом помилок.
+## Очікуваний результат
+- Резюме рендериться у браузері на базі `resume.json`
+- Відображаються всі блоки: Header, Summary, Experience, Education, Skills
+- Проєкти з `isRecent: true` підсвічуються стилем .highlight
 
 ## Вимоги
 - Node.js
